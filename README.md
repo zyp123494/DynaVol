@@ -20,4 +20,18 @@ pip install -r requirements.txt
 
 ### DynaVol dataset
 
-DynaVol dataset is available at [GoogleDrive](https://drive.google.com/drive/folders/1rADezOEG3WwMidwQkWQBdGTGiW2Y1Q2K?usp=sharing) or [OneDrive](https://sjtueducn-my.sharepoint.com/:f:/g/personal/zhao-yan-peng_sjtu_edu_cn/ErPjQahfAtFGsj74okb-dKQBcgoVVpdYRr_vG_oC9rXFdQ?e=xkwFdd)
+DynaVol dataset is available at [GoogleDrive](https://drive.google.com/drive/folders/1rADezOEG3WwMidwQkWQBdGTGiW2Y1Q2K?usp=sharing) or [OneDrive](https://sjtueducn-my.sharepoint.com/:f:/g/personal/zhao-yan-peng_sjtu_edu_cn/ErPjQahfAtFGsj74okb-dKQBcgoVVpdYRr_vG_oC9rXFdQ?e=xkwFdd). For each scene, we release the static data, dynamic data, and dynamic data which is collected by 4 fixed views(can be used to train [DeVRF](https://github.com/showlab/DeVRF/tree/main)). Please refer to the following data structure for an overview of DynaVol dataset.
+
+```
+    [3ObjFall|6ObjFall|...]
+    ├── static 
+    │   └── ├── [train|val|test]
+    │       └── transforms_[train|val|test].json
+    ├── dynamic 
+    │   └── ├── [train|val|test]
+    │       └── transforms_[train|val|test].json  
+    └── dynamic_4views 
+        └── ├── [train]
+            └── transforms_[train].json 
+  
+```
