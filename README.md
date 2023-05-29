@@ -53,6 +53,8 @@ $ bash run.sh
 
 ```
 
+Code for real-world data is coming soon!
+
 
 ## Acknowledgements
 This codebase is based on [DirectVoxGO](https://github.com/sunset1995/DirectVoxGO) and [DeVRF](https://github.com/showlab/DeVRF/tree/main).
