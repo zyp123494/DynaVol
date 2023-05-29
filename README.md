@@ -1,6 +1,7 @@
 # DynaVol
 
 [Project page](https://sites.google.com/view/dynavol/) | [arxiv](https://arxiv.org/abs/2305.00393)
+
 Code repository for this paper:  
 **Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding.**  
 Siyu Gao, Yanpeng Zhao, [Yunbo Wang](https://wyb15.github.io/)<sup>†</sup>, [Xiaokang Yang](https://scholar.google.com/citations?user=yDEavdMAAAAJ&hl=zh-CN)  
