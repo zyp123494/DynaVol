@@ -1,0 +1,1 @@
+python -u run_full.py --render_train --render_test  --eval_ssim --per_slot --num_slots 10 --thresh 0.01 --i_weights 10000 --config configs/inward-facing/movi_base.py
