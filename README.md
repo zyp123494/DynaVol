@@ -35,3 +35,25 @@ DynaVol dataset is available at [GoogleDrive](https://drive.google.com/drive/fol
             └── transforms_[train].json 
   
 ```
+
+## Experiment
+
+### Training
+Stage1: Warmup stage 
+```bash
+$ cd warmup
+$ bash run_full.sh
+
+```
+
+Stage2: Dynamic grounding stage, change the static_model_path in [config](dynamic_grounding/configs/inward-facing/movi_pipeline.py) to the checkpoint of the first stage(e.g. "/DynaVol/warmup/exp/3ObjFall/fine_last_n.tar").
+```bash
+$ cd ../dynamic_grounding
+$ bash run.sh
+
+```
+
+
+## Acknowledgements
+This codebase is based on [DirectVoxGO](https://github.com/sunset1995/DirectVoxGO) and [DeVRF](https://github.com/showlab/DeVRF/tree/main).
+
