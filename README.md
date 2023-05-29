@@ -1,6 +1,6 @@
 # DynaVol
 
-[Project page](https://sites.google.com/view/dynavol/) | [arxiv](https://arxiv.org/abs/2305.00393)
+[Project page](https://sites.google.com/view/dynavol/) | [arXiv](https://arxiv.org/abs/2305.00393)
 
 Code repository for this paper:  
 **Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding.**  
