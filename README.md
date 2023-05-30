@@ -46,7 +46,7 @@ $ bash run_full.sh
 
 ```
 
-Stage2: Dynamic grounding stage, change the static_model_path in [config](dynamic_grounding/configs/inward-facing/movi_pipeline.py) to the checkpoint of the first stage(e.g. "/DynaVol/warmup/exp/3ObjFall/fine_last_n.tar").
+Stage2: Dynamic grounding stage, modify the static_model_path in [config](dynamic_grounding/configs/inward-facing/movi_pipeline.py) to the checkpoint of the first stage(e.g. "/DynaVol/warmup/exp/3ObjFall/fine_last_n.tar").
 ```bash
 $ cd ../dynamic_grounding
 $ bash run.sh
