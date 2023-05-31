@@ -1,6 +1,6 @@
 # DynaVol dataset
 
-This is the implementation of producing a synthetic dataset used in DynaVol. The code uses [Kubric](https://github.com/google-research/kubric) to generate the dataset.
+This is the implementation of producing the synthetic dataset used in DynaVol. The code uses [Kubric](https://github.com/google-research/kubric) to generate the dataset.
 
 ## Preparation
 
