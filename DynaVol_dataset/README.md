@@ -52,17 +52,17 @@ $ python post_process.py
 ```
 
 ## Reproduction: datasets used in DynaVol
-[DynaVol_syn_shape.py](DynaVol_dataset/Dynavol_syn_shape.py) is used for synthetic objects, and [DynaVol_real_shape.py](DynaVol_dataset/DynaVol_real_shape.py) for real world objects. 
+[DynaVol_syn_shape.py](DynaVol_dataset/Dynavol_syn_shape.py) is used for synthetic objects, and [DynaVol_real_shape.py](DynaVol_dataset/DynaVol_real_shape.py) for real-world objects. 
 
 Add "--objects_set kubasic" for more complex shapes (e.g. 3Fall+3Still),
 
 "--num_stc_objects N" to add N static objects,
 
-"--material" to modify the material of the object (e.g. 3ObjMetal), 
+"--material" to modify the material of objects (e.g. 3ObjMetal), 
 
-"--xy_vel" for more complex movement patterns (e.g. 3ObjRand),
+"--xy_vel" for more complex motion patterns (e.g. 3ObjRand),
 
-"real_texture"(Only works for real world objects) for real world texture(e.g. 3RealCmpx).
+"--real_texture"(Only works for real world objects) for real-world texture(e.g. 3RealCmpx).
 
 ## Citation
 
