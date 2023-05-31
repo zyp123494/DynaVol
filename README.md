@@ -55,6 +55,28 @@ $ bash run.sh
 
 Code for real-world data is coming soon!
 
+## Citation
+
+  
+
+If you find our work helps, please cite our paper.
+
+  
+
+```bibtex
+
+@misc{gao2023unsupervised,
+      title={Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding}, 
+      author={Siyu Gao and Yanpeng Zhao and Yunbo Wang and Xiaokang Yang},
+      year={2023},
+      eprint={2305.00393},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
+
+```
+
 
 ## Acknowledgements
 This codebase is based on [DirectVoxGO](https://github.com/sunset1995/DirectVoxGO) and [DeVRF](https://github.com/showlab/DeVRF/tree/main).
