@@ -62,7 +62,7 @@ Add "--objects_set kubasic" for more complex shapes (e.g. 3Fall+3Still),
 
 "--xy_vel" for more complex motion patterns (e.g. 3ObjRand),
 
-"--real_texture"(Only for real-world objects) for real-world texture(e.g. 3ObjRealCmpx).
+"--real_texture"(only for real-world objects) for real-world texture(e.g. 3ObjRealCmpx).
 
 ## Citation
 
