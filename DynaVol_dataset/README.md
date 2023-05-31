@@ -1,29 +1,38 @@
-# DynaVol
+# DynaVol dataset
 
-[Project page](https://sites.google.com/view/dynavol/) | [arXiv](https://arxiv.org/abs/2305.00393)
-
-Code repository for this paper:  
-**Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding.**  
-Siyu Gao, Yanpeng Zhao, [Yunbo Wang](https://wyb15.github.io/)<sup>†</sup>, [Xiaokang Yang](https://scholar.google.com/citations?user=yDEavdMAAAAJ&hl=zh-CN)
-
-<img  src="/figure/dynavol.PNG"  alt="dynavol"  style="zoom:67%;"  />
+This is the implementation of producing a synthetic dataset used in DynaVol. The code uses [Kubric](https://github.com/google-research/kubric) to generate the dataset.
 
 ## Preparation
 
 ### Installation
-```
-git clone https://github.com/zyp123494/DynaVol.git
-cd DynaVol
-pip install -r requirements.txt
-```
-[Pytorch](https://pytorch.org/), [torch_scatter](https://github.com/rusty1s/pytorch_scatter) and [DGL](https://github.com/zyp123494/DynaVol.git)(CPU version is sufficient) installation is machine dependent, please install the correct version for your machine.
+Install [Docker](https://www.docker.com/) follow the instruction [here](https://docs.docker.com/engine/install/).
 
-### DynaVol dataset
+Pull Kubric image follow the instruction [here](https://github.com/google-research/kubric).
 
-DynaVol dataset is available at [GoogleDrive](https://drive.google.com/drive/folders/1rADezOEG3WwMidwQkWQBdGTGiW2Y1Q2K?usp=sharing) or [OneDrive](https://sjtueducn-my.sharepoint.com/:f:/g/personal/zhao-yan-peng_sjtu_edu_cn/ErPjQahfAtFGsj74okb-dKQBcgoVVpdYRr_vG_oC9rXFdQ?e=xkwFdd). For each scene, we release the static data, dynamic data, and dynamic data which is collected by 4 fixed views(can be used to train [DeVRF](https://github.com/showlab/DeVRF/tree/main)). Please refer to the following data structure for an overview of DynaVol dataset.
+## Build DynaVol dataset
+
+### Build a single scene
+```bash
+$ docker run \
+    --rm \
+    --interactive \
+    --user $(id -u):$(id -g) \
+    --volume "$(pwd):/kubric" \
+    kubricdockerhub/kubruntu \
+    /usr/bin/python3 DynaVol_syn_shape.py 
 
 ```
-    [3ObjFall|6ObjFall|...]
+
+### Build multiple scenes
+```bash
+$ bash launch.sh
+
+```
+
+The scripts above generate several files and output for Kubric. These files include:
+
+```
+    [output]
     ├── static 
     │   └── ├── [train|val|test]
     │       └── transforms_[train|val|test].json
@@ -31,29 +40,19 @@ DynaVol dataset is available at [GoogleDrive](https://drive.google.com/drive/fol
     │   └── ├── [train|val|test]
     │       └── transforms_[train|val|test].json  
     └── dynamic_4views 
-        └── ├── [train]
+        └── ├── [view0|view1|view2|view3]
             └── transforms_[train].json 
   
 ```
 
-## Experiment
-
-### Training
-Stage1: Warmup stage 
+Post-processing of data, including background removal and merging of 4 fixed views:
 ```bash
-$ cd warmup
-$ bash run_full.sh
+$ python post_process.py
 
 ```
 
-Stage2: Dynamic grounding stage, modify the static_model_path in [config](dynamic_grounding/configs/inward-facing/movi_pipeline.py) to the checkpoint of the first stage(e.g. "/DynaVol/warmup/exp/3ObjFall/fine_last_n.tar").
-```bash
-$ cd ../dynamic_grounding
-$ bash run.sh
-
-```
-
-Code for real-world data is coming soon!
+## Reproduction: datasets used in DynaVol
+Use [DynaVol_syn_shape.py](Dynavol_syn_shape.py) for synthetic objects, and [DynaVol_real_shape.py](Dynavol_real_shape.py) for real world objects. Add "--objects_set kubasic" for more complex shapes (e.g. 3Fall+3Still), "--num_stc_objects N" to add N static objects, "--material" to modify the material of the object (e.g. 3ObjMetal), "--xy_vel" for more complex movement patterns (e.g. 3ObjRand), "real_texture"(Only works for real world objects) for real world texture(e.g. 3RealCmpx).
 
 ## Citation
 
@@ -77,5 +76,5 @@ If you find our work helps, please cite our paper.
 
 
 ## Acknowledgements
-This codebase is based on [DirectVoxGO](https://github.com/sunset1995/DirectVoxGO) and [DeVRF](https://github.com/showlab/DeVRF/tree/main).
+This codebase is based on [Kubric](https://github.com/google-research/kubric).
 
