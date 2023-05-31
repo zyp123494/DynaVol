@@ -36,6 +36,8 @@ DynaVol dataset is available at [GoogleDrive](https://drive.google.com/drive/fol
   
 ```
 
+For more details of the DynaVol dataset and the code to generate it, please refer to [DynaVol_dataset](DynaVol_dataset).
+
 ## Experiment
 
 ### Training
