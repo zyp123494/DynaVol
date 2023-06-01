@@ -47,7 +47,7 @@ The scripts above generate several files and output for Kubric. These files incl
 
 Post-processing of data, including background removal and merging of 4 fixed views:
 ```bash
-$ python post_process.py
+$ python process_dataset.py
 
 ```
 
