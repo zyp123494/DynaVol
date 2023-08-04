@@ -16,7 +16,7 @@ git clone https://github.com/zyp123494/DynaVol.git
 cd DynaVol
 pip install -r requirements.txt
 ```
-[Pytorch](https://pytorch.org/), [torch_scatter](https://github.com/rusty1s/pytorch_scatter) and [DGL](https://github.com/zyp123494/DynaVol.git)(CPU version is sufficient) installation is machine dependent, please install the correct version for your machine.
+[Pytorch](https://pytorch.org/), [torch_scatter](https://github.com/rusty1s/pytorch_scatter) and [DGL](https://www.dgl.ai/pages/start.html)(CPU version is sufficient) installation is machine dependent, please install the correct version for your machine.
 
 ### DynaVol dataset
 
