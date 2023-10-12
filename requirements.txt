@@ -16,3 +16,4 @@ tqdm
 Ninja
 einops
 imageio-ffmpeg
+tensorboard
