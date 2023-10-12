@@ -17,3 +17,4 @@ Ninja
 einops
 imageio-ffmpeg
 tensorboard
+yapf==0.40.1
