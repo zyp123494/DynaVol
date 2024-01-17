@@ -3,10 +3,13 @@
 [Project page](https://sites.google.com/view/dynavol/) | [arXiv](https://arxiv.org/abs/2305.00393)
 
 Code repository for this paper:  
-**Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding.**  
-Siyu Gao, Yanpeng Zhao, [Yunbo Wang](https://wyb15.github.io/)<sup>†</sup>, [Xiaokang Yang](https://scholar.google.com/citations?user=yDEavdMAAAAJ&hl=zh-CN)
+**DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization**  
+Yanpeng Zhao, Siyu Gao, [Yunbo Wang](https://wyb15.github.io/)<sup>†</sup>, [Xiaokang Yang](https://scholar.google.com/citations?user=yDEavdMAAAAJ&hl=zh-CN)
 
 <img  src="/figure/dynavol.PNG"  alt="dynavol"  style="zoom:67%;"  />
+
+## News🎉
+-[2024.1.17] DynaVol got accepted by ICLR2024!
 
 ## Preparation
 
@@ -67,11 +70,11 @@ If you find our work helps, please cite our paper.
 
 ```bibtex
 
-@article{gao2023unsupervised,
-  title={Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding},
-  author={Siyu Gao and Yanpeng Zhao and Yunbo Wang and Xiaokang Yang},
-  journal={arXiv preprint arXiv:2305.00393},
-  year={2023}
+@inproceedings{zhao2024dynavol,
+  author={Yanpeng Zhao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
+  title={DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization},
+  booktitle = {International Conference on Learning Representations},
+  year={2024}
 }
 
 
