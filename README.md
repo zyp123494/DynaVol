@@ -6,7 +6,7 @@ Code repository for this paper:
 **DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization**  
 Yanpeng Zhao, Siyu Gao, [Yunbo Wang](https://wyb15.github.io/)<sup>†</sup>, [Xiaokang Yang](https://scholar.google.com/citations?user=yDEavdMAAAAJ&hl=zh-CN)
 
-<img  src="/figure/dynavol.PNG"  alt="dynavol"  style="zoom:67%;"  />
+<img  src="/figure/dynavol.png"  alt="dynavol"  style="zoom:67%;"  />
 
 ## News🎉
 -[2024.1.17] DynaVol got accepted by ICLR2024!
