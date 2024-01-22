@@ -74,11 +74,11 @@ If you find our work helps, please cite our paper.
 
 ```bibtex
 
-@article{gao2023unsupervised,
-  title={Unsupervised Object-Centric Voxelization for Dynamic Scene Understanding},
-  author={Siyu Gao and Yanpeng Zhao and Yunbo Wang and Xiaokang Yang},
-  journal={arXiv preprint arXiv:2305.00393},
-  year={2023}
+@inproceedings{zhao2024dynavol,
+  author={Yanpeng Zhao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
+  title={DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization},
+  booktitle = {International Conference on Learning Representations},
+  year={2024}
 }
 
 
