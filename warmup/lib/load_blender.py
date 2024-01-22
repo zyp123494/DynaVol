@@ -73,8 +73,9 @@ def load_blender_data(basedir, half_res=False, testskip=1):
                 H = H // 2
                 W = W // 2
             poses.append(np.array(frame['transform_matrix']))
-            cur_time = frame['time'] if 'time' in frame else 0
+            cur_time = 0
             times.append(cur_time)
+            
             if s == 'train':
                 # add flow
                 if cur_time == 0:

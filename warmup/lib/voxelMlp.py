@@ -303,6 +303,25 @@ class VoxelMlp(torch.nn.Module):
             return ret_lst[0]
         return ret_lst
 
+    def grid_sampler_imp(self, xyz, importance=None, vq=None):
+        '''
+        xyz: global coordinates to query
+        '''
+        shape = xyz.shape[:-1]
+        xyz = xyz.reshape(1,1,1,-1,3)
+        ind_norm = ((xyz - self.xyz_min) / (self.xyz_max - self.xyz_min)).flip((-1,)) * 2 - 1
+        
+        if importance is not None:
+            self.channels=1
+            sampled_importance = F.grid_sample(importance, ind_norm, mode='bilinear', align_corners=False)
+            sampled_importance = sampled_importance.reshape(self.channels,-1).T.reshape(*shape,self.channels)
+            if self.channels == 1:
+                sampled_importance = sampled_importance.squeeze(-1)
+        if importance is not None:
+            return sampled_importance
+        else:
+            raise NotImplementedError
+
     def hit_coarse_geo(self, rays_o, rays_d, near, far, stepsize, **render_kwargs):
         '''Check whether the rays hit the solved coarse geometry or not'''
         shape = rays_o.shape[:-1]
@@ -465,6 +484,85 @@ class VoxelMlp(torch.nn.Module):
             
     
             ret_dict.update({'segmentation': segmentation})   #[N]
+        
+        
+        return ret_dict
+    
+    def forward_imp(self, rays_o, rays_d, viewdirs, frame_time,  time_index, start = False,bg_points_sel=None,pseudo_grid = None, global_step=None, **render_kwargs):
+        '''Volume rendering
+        @rays_o:   [N, 3] the starting point of the N shooting rays.
+        @rays_d:   [N, 3] the shooting direction of the N rays.
+        @viewdirs: [N, 3] viewing direction to compute positional embedding for MLP.
+        '''
+        assert len(rays_o.shape)==2 and rays_o.shape[-1]==3, 'Only suuport point queries in [N, 3] format'
+
+        ret_dict = {}
+        N = len(rays_o)
+
+        # sample points on rays
+        ray_pts, ray_id, step_id = self.sample_ray(
+            rays_o=rays_o, rays_d=rays_d, is_train=global_step is not None, **render_kwargs)
+        interval = render_kwargs['stepsize'] * self.voxel_size_ratio
+
+
+        cycle_loss = 0
+        
+        
+        # dynamics data
+      
+        if start:
+            density = self.grid_sampler(ray_pts, self.density)
+            ray_pts_ = ray_pts
+            sampled_pseudo_grid = self.grid_sampler_imp(ray_pts_, importance = pseudo_grid)
+            
+        else:
+            dx = self.query_time(ray_pts, frame_time, self._time, self._time_out)
+            ray_pts_ = ray_pts + dx
+
+            density = self.grid_sampler(ray_pts_, self.density)
+            sampled_pseudo_grid = self.grid_sampler_imp(ray_pts_, importance = pseudo_grid)
+
+   
+
+        if self.density.shape[1] == 1:
+            odensity = density[None, :]  #[K,P]  in warm up stage, K=1 while training.
+        else:
+            raise NotImplementedError
+
+
+        
+        alpha = 1 - torch.exp(-density * interval)
+        if self.fast_color_thres > 0:
+            mask = (alpha > self.fast_color_thres)
+            ray_id_ = ray_id[mask]
+            step_id = step_id[mask]
+            density = density[mask]
+            alpha = alpha[mask]
+            sampled_pseudo_grid = sampled_pseudo_grid[mask]
+            
+
+        
+        weights, alphainv_last = Alphas2Weights.apply(alpha, ray_id_, N)
+        if self.fast_color_thres > 0:
+            mask = (weights > self.fast_color_thres)
+            weights = weights[mask]
+            alpha = alpha[mask]
+            ray_id_ = ray_id_[mask]
+            step_id = step_id[mask]
+            density = density[mask]
+            sampled_pseudo_grid = sampled_pseudo_grid[mask]
+            
+
+        
+        
+        ret_dict.update({
+            'alphainv_last': alphainv_last,
+            'weights': weights,
+            'ray_id': ray_id_,
+            'sampled_pseudo_grid':sampled_pseudo_grid
+            
+        })
+
         
         
         return ret_dict

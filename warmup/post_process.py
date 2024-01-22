@@ -8,7 +8,7 @@ import skimage
 import dgl
 import networkx
 from tqdm import tqdm
-
+from scipy import ndimage
 #density thresh 1e-2, dx_thresh 0.08, rgb= 0.06 by default , rgb = 0.3 for metal
 def connected_components(binary_mask,dx,rgb, dx_thresh= 0.08, rgb_thresh = 0.06):
     #binary_mask[H,W,D]
@@ -67,25 +67,25 @@ def connected_components(binary_mask,dx,rgb, dx_thresh= 0.08, rgb_thresh = 0.06)
     
     labels = np.zeros(binary_mask.shape,dtype = np.int32)
     labels[binary_mask > 0] = labels_
-    print(max(dx_dists),min(dx_dists), sum(dx_dists)/len(dx_dists))
+    #print(max(dx_dists),min(dx_dists), sum(dx_dists)/len(dx_dists))
 
     dx_dists.sort()
     mid = len(dx_dists) // 2
     res = (dx_dists[mid] + dx_dists[~mid]) / 2
-    print(res)
+    #print(res)
 
-    print(max(rgb_dists),min(rgb_dists), sum(rgb_dists)/len(rgb_dists))
+    #print(max(rgb_dists),min(rgb_dists), sum(rgb_dists)/len(rgb_dists))
 
     rgb_dists.sort()
     mid = len(rgb_dists) // 2
     res = (rgb_dists[mid] +rgb_dists[~mid]) / 2
-    print(res)
+    #print(res)
 
     return labels
 
 #connected_components
 
-def post_process(density, act_shift,num_slots,dx,rgb,thresh = 1e-3,method = 'cc',hyper=False, grad = None):
+def post_process(density, act_shift,num_slots,dx,rgb,thresh = 1e-3,method = 'cc',hyper=False, importance = None):
    
     assert density.shape[1] == 1
     density = density[0,0]  #[X,Y,Z]
@@ -123,6 +123,16 @@ def post_process(density, act_shift,num_slots,dx,rgb,thresh = 1e-3,method = 'cc'
 
     else:
         raise NotImplementedError
+
+    #calculate the size of each connected components by their contribution to the rendered image
+    size = np.zeros([labels.max()])
+    for i in range(1, labels.max() + 1):
+        size[i-1] =(binary_mask[labels == i] *  (importance[labels == i])).sum()
+
+    sort_idx = np.argsort(size)[::-1]
+    sorted_size = size[sort_idx]
+
+
     new_density = np.zeros([1, num_slots, *density.shape])
 
     #process background
@@ -133,26 +143,41 @@ def post_process(density, act_shift,num_slots,dx,rgb,thresh = 1e-3,method = 'cc'
 
     size = np.zeros([labels.max()])  
     print(labels.max())
+
+    # re-organize label by their size
+    labels_copy = labels.copy()
+    for i in range(sort_idx.shape[0]):
+        x ,y,z= np.where(labels == (sort_idx[i]+1))
+        labels_copy[labels==(sort_idx[i] + 1)] = (i+1)
+
+    labels = labels_copy.copy()
     
-    if hyper:
-        for i in range(1, labels.max() + 1):
-            size[i-1] =(binary_mask[labels == i] *  (grad[labels == i]**2)).sum()
-    else:
-        for i in range(1, labels.max() + 1):
-            size[i-1] =(binary_mask[None,labels == i] *  (1 -  rgb[:,labels == i])).sum()
-    sort_idx = np.argsort(size)[::-1]
+
+    # using nearest interpolation for N-num_slots smallest connected components
+    labels_nearest = labels.copy()
+    labels_copy = labels.copy()
+    labels_nearest[labels_nearest>num_slots] = 0
+    labels_nearest = 1 - (labels_nearest >0)
+    _,indices = ndimage.distance_transform_edt(labels_nearest,return_indices = True)
+    x,y,z = indices[:,...]
+    labels_copy = labels_copy[x,y,z]
+    labels[labels>0] = labels_copy[labels > 0]
+    
+   
 
     
 
     count =0
     for i in range(sort_idx.shape[0]):
-        new_density[0,count, labels == (sort_idx[i] + 1)] = density[labels == (sort_idx[i] + 1)]
+        if not (labels==(i+1)).any():
+            continue
+        new_density[0,count, labels == (i + 1)] = density[labels == (i + 1)]
         count += 1
         count = min(num_slots-1, count)
 
 
     new_density = torch.from_numpy(new_density)        
-    masks = new_density / (new_density.sum(1,keepdim = True) + 1e-8)
+    masks = new_density / (new_density.sum(1,keepdim = True) + 1e-5)
     torch.set_default_tensor_type(torch.cuda.FloatTensor)
     return masks
    

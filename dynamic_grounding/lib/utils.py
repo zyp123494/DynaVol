@@ -238,7 +238,7 @@ def vis_seg(vid, pr_masks, gt_masks, savedir): # [seq, H, W]
         seg_pre_array.append(pred_seg[:, :, 0, :]*255)
 
     # pdb.set_trace()
-    seg_pre_array = np.array(seg_pre_array)
-    imageio.mimwrite(os.path.join(savedir, 'seg.mp4'), seg_pre_array, fps=10, quality=8)
+    #seg_pre_array = np.array(seg_pre_array)
+    #imageio.mimwrite(os.path.join(savedir, 'seg.mp4'), seg_pre_array, fps=10, quality=8)
         
         

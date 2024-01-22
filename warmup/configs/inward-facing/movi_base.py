@@ -4,14 +4,14 @@ expname = '3objs'
 basedir = 'exp/'
 
 data = dict(
-    datadir='/data/3objfall/dynamic',
+    datadir='/data/3objsfall/dynamic',
     dataset_type='blender',
     white_bkgd=True,
     half_res = False,
 )
 
 data_static = dict(
-    datadir='/data/3objfall/static',
+    datadir='/data/3objsfall/static',
     dataset_type='blender',
     white_bkgd=True,
     num_train = 5,
@@ -40,4 +40,5 @@ fine_model_and_render = dict(
     skips=[2],
     z_dim=128,                                       # dimension of hidden dimension in nerf decoder
     n_layers=4, 
+    timesteps=60, 
 )

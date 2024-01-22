@@ -13,6 +13,7 @@ import torch.nn.functional as F
 import glob
 from PIL import Image
 from lib import utils
+import skimage
 from lib import voxelMlp as VoxelMlp
 
 from lib.load_data import load_data_ours
@@ -69,9 +70,11 @@ def gray2rgb(seg):
     PALETTE = [0, 0, 0, 128, 0, 0, 0, 128, 0, 128, 128, 0, 0, 0, 128, 128, 0, 128, 0, 128, 128, 128, 128, 128, 64, 0, 0, 191, 0, 0, 64, 128, 0, 191, 128, 0, 64, 0, 128]
     img =Image.fromarray(seg.astype(np.uint8),mode = 'P')
     img.putpalette(PALETTE)
-    img.save('tmp.png')
-    img = skimage.io.imread('tmp.png')
-    return img[...,:3]
+    img = img.convert("RGB")
+    return np.array(img)
+    # img.save('tmp.png')
+    # img = skimage.io.imread('tmp.png')
+    #return np.array(img[...,:3])
 
 @torch.no_grad()
 def render_viewpoints(model, render_poses, HW, Ks, frame_times, ndc, render_kwargs,
@@ -139,9 +142,12 @@ def render_viewpoints(model, render_poses, HW, Ks, frame_times, ndc, render_kwar
         if render_kwargs.get('segmentation', True):
             seg = render_result['segmentation'].cpu().numpy()
             segmentations.append(seg)
+            
 
         if i==0:
             print('Testing', rgb.shape)
+
+    
 
         if gt_imgs is not None and render_factor==0:
             p = -10. * np.log10(np.mean(np.square(rgb - gt_imgs[i])))
@@ -157,6 +163,26 @@ def render_viewpoints(model, render_poses, HW, Ks, frame_times, ndc, render_kwar
     eps_render = time.time() - eps_render
     eps_time_str = f'{eps_render//3600:02.0f}:{eps_render//60%60:02.0f}:{eps_render%60:02.0f}'
     print('render: render takes ', eps_time_str)
+
+
+    if render_kwargs.get('segmentation', True):
+        segs = np.array(segmentations)
+        slot2label = np.zeros([segs.max()+1])
+        unique_label = np.unique(segs)
+        for label in range(unique_label.shape[0]):
+            slot2label[unique_label[label]] = label
+
+    if len(segmentations):
+        seg_vis = []
+        for (idx,seg) in enumerate(segmentations):
+            for i in range(slot2label.shape[0]):
+                seg_ = seg.copy()
+                seg_[seg_ == i] = slot2label[i]
+            
+            seg_vis.append(gray2rgb(seg_[...,0]))
+            skimage.io.imsave(os.path.join(savedir, f"seg_{str(idx)}.png"),seg_vis[-1])
+        seg_vis = np.array(seg_vis)
+        imageio.mimwrite(os.path.join(savedir, 'seg.mp4'), utils.to8b(seg_vis), fps=10, quality=8)
 
     f1 = open(os.path.join(savedir, 'result.txt'), 'w')
     if len(psnrs):
@@ -312,7 +338,7 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, stage, 
     else:
         model_class = VoxelMlp.VoxelMlp
     num_voxels_motion = model_kwargs.pop('num_voxels_motion')
-    timesteps = model_kwargs.pop('timesteps')   
+    timesteps = model_kwargs.pop('timesteps')   #len(frame_time)
     warp_ray = model_kwargs.pop('warp_ray')  
     world_motion_bound_scale = model_kwargs.pop('world_motion_bound_scale')  
 
@@ -370,7 +396,7 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, stage, 
 
     rgb_tr, rays_o_tr, rays_d_tr, viewdirs_tr, imsz, batch_index_sampler = gather_training_rays()
 
-    if cfg.data.load2gpu_on_the_fly:
+    if not cfg.data.load2gpu_on_the_fly:
         rgb_tr = rgb_tr.to(device)
         rays_o_tr = rays_o_tr.to(device)
         rays_d_tr = rays_d_tr.to(device)
@@ -434,10 +460,10 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, stage, 
             frame_time = frame_times[img_i].to(target.device)
         elif cfg_train.ray_sampler == 'sequential_1im_fixed':
             # pdb.set_trace()
-            img_i = torch.tensor(global_step % timesteps, device=device)   
+            img_i = torch.tensor(global_step % timesteps,device = "cpu" if cfg.data.load2gpu_on_the_fly else device)   
 
-            sel_r = torch.randint(rgb_tr.shape[1], [cfg_train.N_rand])
-            sel_c = torch.randint(rgb_tr.shape[2], [cfg_train.N_rand])
+            sel_r = torch.randint(rgb_tr.shape[1], [cfg_train.N_rand]).to("cpu" if cfg.data.load2gpu_on_the_fly else device)
+            sel_c = torch.randint(rgb_tr.shape[2], [cfg_train.N_rand]).to("cpu" if cfg.data.load2gpu_on_the_fly else device)
             target = rgb_tr[img_i, sel_r, sel_c]
             rays_o = rays_o_tr[img_i, sel_r, sel_c]
             rays_d = rays_d_tr[img_i, sel_r, sel_c]
@@ -446,6 +472,14 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, stage, 
             pose = poses[i_train][img_i]
         else:
             raise NotImplementedError
+
+        if cfg.data.load2gpu_on_the_fly:
+            target = target.to(device)
+            rays_o = rays_o.to(device)
+            rays_d = rays_d.to(device)
+            viewdirs = viewdirs.to(device)
+            frame_time = frame_time.to(device)
+           
 
         # volume rendering
         render_result = model(rays_o, rays_d, viewdirs, frame_time, img_i, global_step=global_step, start=(frame_time==0), first_episode=(int(global_step/timesteps)==0), **render_kwargs)

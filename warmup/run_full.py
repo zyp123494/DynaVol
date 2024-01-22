@@ -392,12 +392,16 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, data_di
     rgb_tr_stc, rays_o_tr_stc, rays_d_tr_stc, viewdirs_tr_stc, imsz_stc, batch_index_sampler_stc = gather_static_training_rays()
 
 
-    if cfg.data.load2gpu_on_the_fly:
+    if not cfg.data.load2gpu_on_the_fly:
         rgb_tr = rgb_tr.to(device)
         rays_o_tr = rays_o_tr.to(device)
         rays_d_tr = rays_d_tr.to(device)
         viewdirs_tr = viewdirs_tr.to(device)
         frame_times = frame_times.to(device)
+        rgb_tr_stc = rgb_tr_stc.to(device)
+        rays_o_tr_stc = rays_o_tr_stc.to(device)
+        rays_d_tr_stc = rays_d_tr_stc.to(device)
+        viewdirs_tr_stc = viewdirs_tr_stc.to(device)
 
         if not cfg.data.ndc:
             rgb_tr_stc = rgb_tr.to(device)
@@ -470,17 +474,11 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, data_di
             frame_time = frame_times[img_i].to(target.device)
         elif cfg_train.ray_sampler == 'sequential_1im_fixed':
 
-            num_views = frame_times.shape[0] // timesteps
-            assert (frame_times.shape[0]%timesteps) == 0
+            img_i = global_step % frame_times.shape[0]
 
-            img_i = global_step % timesteps  #[0-59]
-            if img_i == 0 and global_step!= 0:
-                cur_view = (cur_view+1) % num_views
-            img_i = img_i * num_views + cur_view #[0-239] 
-
-            img_i = torch.tensor(img_i,device = device)
-            sel_r = torch.randint(rgb_tr.shape[1], [cfg_train.N_rand])
-            sel_c = torch.randint(rgb_tr.shape[2], [cfg_train.N_rand])
+            img_i = torch.tensor(img_i,device = "cpu" if cfg.data.load2gpu_on_the_fly else device)
+            sel_r = torch.randint(rgb_tr.shape[1], [cfg_train.N_rand]).to("cpu" if cfg.data.load2gpu_on_the_fly else device)
+            sel_c = torch.randint(rgb_tr.shape[2], [cfg_train.N_rand]).to("cpu" if cfg.data.load2gpu_on_the_fly else device)
             target = rgb_tr[img_i, sel_r, sel_c]
             rays_o = rays_o_tr[img_i, sel_r, sel_c]
             rays_d = rays_d_tr[img_i, sel_r, sel_c]
@@ -501,6 +499,18 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train, data_dict, data_di
             rays_d_stc = rays_d_tr_stc[img_i_stc, sel_r_stc, sel_c_stc]
             viewdirs_stc = viewdirs_tr_stc[img_i_stc, sel_r_stc, sel_c_stc]
             frame_time_stc = frame_times[0]
+
+        if cfg.data.load2gpu_on_the_fly:
+            target = target.to(device)
+            rays_o = rays_o.to(device)
+            rays_d = rays_d.to(device)
+            viewdirs = viewdirs.to(device)
+            frame_time = frame_time.to(device)
+            target_stc = target_stc.to(device)
+            rays_o_stc = rays_o_stc.to(device)
+            rays_d_stc = rays_d_stc.to(device)
+            viewdirs_stc = viewdirs_stc.to(device)
+            frame_time_stc = frame_time_stc.to(device)
 
        
         render_result = model(rays_o, rays_d, viewdirs, frame_time, img_i, global_step=global_step, start=(frame_time==0), **render_kwargs)
@@ -625,7 +635,8 @@ def train(args, cfg, data_dict, data_dict_static):
     print('train: fine detail reconstruction in', eps_time_str)
 
 
-def get_gradient(args, cfg, stage, model):
+
+def get_importance(args, cfg, data_dict, model):
     stepsize = cfg.fine_model_and_render.stepsize
     
     render_kwargs={
@@ -640,12 +651,15 @@ def get_gradient(args, cfg, stage, model):
         'num_slots':cfg.fine_model_and_render.max_instances,
     }
         
-    ndc = cfg.data.ndc
     
+    ndc = cfg.data.ndc
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')    
     print("xyzmin,max",model.xyz_min,model.xyz_max)
 
     eps_render = time.time()
+    pseudo_grid = torch.ones_like(model.density)
+    pseudo_grid.requires_grad = True
+
     for i, c2w in enumerate(tqdm(data_dict['poses'][data_dict['i_train']])):
 
         H, W = data_dict['HW'][data_dict['i_train']][i]
@@ -659,12 +673,21 @@ def get_gradient(args, cfg, stage, model):
         rays_o = rays_o.flatten(0,-2)
         rays_d = rays_d.flatten(0,-2)
         viewdirs = viewdirs.flatten(0,-2)
+    
+
+       
+        bacth_size = 1000
 
         for ro, rd, vd in zip(rays_o.split(1024, 0), rays_d.split(1024, 0), viewdirs.split(1024, 0)):
-            render_result = model(ro, rd, vd, frame_time, i, start=(frame_time==0), training_flag=False, stc_data=False,**render_kwargs)
-            render_result['rgb_marched'].sum().backward()
-    
-    return model.density.grad[0][0]
+            ret = model.forward_imp(ro, rd, vd, frame_time, i, start=(frame_time==0), pseudo_grid = pseudo_grid, training_flag=False, stc_data=False,**render_kwargs)
+
+            if (ret['weights'].size(0) !=0) and (ret['sampled_pseudo_grid'].size(0) !=0):
+                (ret['weights'].detach()*ret['sampled_pseudo_grid']).sum().backward()
+           
+
+
+    model.density.grad = None
+    return pseudo_grid.grad.clone()
 
 
 def test(args, cfg, stage, model, writer):
@@ -835,39 +858,22 @@ if __name__=='__main__':
     mean_rgb = model.get_mean_rgb()  #[3,X,Y,Z]
 
 
-    #remove those space which has little contribution to the final color.
-    grad = get_gradient(args, cfg, "fine", model)
+    #remove those space which has little contribution to the final image
+    #refer to https://github.com/AlgoHunt/VQRF
+    imp = get_importance(args, cfg, data_dict, model)
+    importance = imp.clone().reshape([-1])
+    importance_prune = 0.999
+    percent_sum = importance_prune
+    vals,idx = sorted_importance = torch.sort(importance+(1e-6))
+    cumsum_val = torch.cumsum(vals, dim=0)
+    split_index = ((cumsum_val/vals.sum()) > (1-percent_sum)).nonzero().min()
+    split_val_nonprune = vals[split_index]
+    percent_point = (importance+(1e-6)>= vals[split_index]).sum()/importance.numel()
+    print(f'{percent_point*100:.2f}% of most important points contribute over {(percent_sum)*100:.2f}% importance ')
     with torch.no_grad():
-        for i in range(model.density.shape[0]):
-            if grad[i, :, :].max() < 1e-6:
-                model.density[0,0,i, :, :] = -100
-            else:
-                break
-        for i in range(model.density.shape[1]):
-            if grad[:, i, :].max() < 1e-6:
-                model.density[0,0,:, i, :] = -100
-            else:
-                break
-        for i in range(model.density.shape[2]):
-            if grad[:, :, i].max() < 1e-6:
-                model.density[0,0,:, :, i] = -100
-            else:
-                break
-        for i in range(1,model.density.shape[0]+1):
-            if grad[-i, :, :].max() < 1e-6:
-                model.density[0,0,-i, :, :] = -100
-            else:
-                break
-        for i in range(1,model.density.shape[1]+1):
-            if grad[:, -i, :].max() < 1e-6:
-                model.density[0,0,:, -i, :] = -100
-            else:
-                break
-        for i in range(1,model.density.shape[2]+1):
-            if grad[:, :, -i].max() < 1e-6:
-                model.density[0,0,:, :, -i] = -100
-            else:
-                break
+        model.density[imp < split_val_nonprune] = -100
+
+    imp = imp[0,0].detach().cpu().numpy()
 
     
     
@@ -876,7 +882,7 @@ if __name__=='__main__':
     
     if args.per_slot:
         #per slot rendering
-        masks = post_process(model.density,model.act_shift,args.num_slots,dx,mean_rgb,args.thresh,method = 'cc').to(model.density.device).float()
+        masks = post_process(model.density,model.act_shift,args.num_slots,dx,mean_rgb,args.thresh,method = 'cc', importance = imp).to(model.density.device).float()
         num_slots = masks.shape[1]
         
 
@@ -891,6 +897,7 @@ if __name__=='__main__':
             state_dict = model.state_dict()
 
             density = torch.log(torch.exp(density) -1 + 1e-10) - model.act_shift
+            density[density>1e3] = 1e3  #avoid nan
             density = density.to(state_dict['density'])
             state_dict['density'] = density
             

@@ -1,1 +1,1 @@
-python run_whole_pipeline.py --config configs/inward-facing/movi_pipeline.py --render_train --render_test --eval_ssim --eval_ari
+python run_whole_pipeline.py --config configs/inward-facing/movi_pipeline.py --render_train --render_test --eval_ssim --eval_ari 

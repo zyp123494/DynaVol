@@ -37,4 +37,5 @@ fine_model_and_render = dict(
     timenet_layers=4,
     timenet_hidden=128, 
     skips=[2],
+    timesteps=60, 
 )
