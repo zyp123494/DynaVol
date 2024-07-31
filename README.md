@@ -18,7 +18,7 @@ Yanpeng Zhao, Yiwei Hao, Siyu Gao, [Yunbo Wang](https://wyb15.github.io/)<sup>â€
 
 ### Installation
 ```
-git clone https://github.com/zyp123494/DynaVol.git
+git clone -b main https://github.com/zyp123494/DynaVol.git
 cd DynaVol
 conda create -n dynavol python=3.8
 conda activate dynavol
