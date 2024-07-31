@@ -14,4 +14,23 @@ Yanpeng Zhao, Yiwei Hao, Siyu Gao, [Yunbo Wang](https://wyb15.github.io/)<sup>â€
 
 -[2024.1.17] DynaVol got accepted by ICLR2024!
 
+## Preparation
+
+### Installation
+```
+git clone https://github.com/zyp123494/DynaVol.git
+cd DynaVol
+conda create -n dynavol python=3.8
+conda activate dynavol
+
+#install pytorch
+pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu121
+
+#install Featup
+git clone https://github.com/mhamilton723/FeatUp.git
+cd FeatUp
+pip install -e .
+
+pip install -r requirements.txt
+
  code is coming soon!
