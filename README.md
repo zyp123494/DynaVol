@@ -46,5 +46,11 @@ In our paper, we use:
 - real-world dataset from [Hyper-NeRF](https://hypernerf.github.io/), [NeRF-DS](https://jokeryan.github.io/projects/nerf-ds/), and [D2NeRF](https://d2nerf.github.io/).
 
 
+## Experiment
+Extract DINOv2 features with FeatUp:
+```
+python extract_dinov2.py
+```
 
- code is coming soon!
+### Training
+
