@@ -105,7 +105,8 @@ url={https://openreview.net/forum?id=koYsgfEwCQ}
 }
 
 @misc{zhao2024dynamicsceneunderstandingobjectcentric,
-      title={Dynamic Scene Understanding through Object-Centric Voxelization and Neural Rendering}, 
+      title={Dynamic Scene Understanding through Object-Centric Voxelization and
+      Neural Rendering}, 
       author={Yanpeng Zhao and Yiwei Hao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
       year={2024},
       eprint={2407.20908},
