@@ -31,7 +31,8 @@ git clone https://github.com/mhamilton723/FeatUp.git
 cd FeatUp
 pip install -e .
 
+#install requirements
 pip install -r requirements.txt
-
 ```
+Install the correct version of [torch_scatter](https://github.com/rusty1s/pytorch_scatter)
  code is coming soon!
