@@ -54,6 +54,7 @@ python extract_dinov2.py
 
 ### Training
 Stage 1: Warmup
+
 Cofig files are under the config directory
 
 ```bash
@@ -66,6 +67,7 @@ $ bash run_hyper.sh
 ```
 
 Stage 2: CRF postprocess
+
 Modify the "base_path" and "data_dir" in crf_postprocess.py, then run:
 ```
 python crf_postprocess.py
