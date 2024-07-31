@@ -70,11 +70,13 @@ If you find our work helps, please cite our paper.
 
 ```bibtex
 
-@inproceedings{zhao2024dynavol,
-  author={Yanpeng Zhao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
-  title={DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization},
-  booktitle = {International Conference on Learning Representations},
-  year={2024}
+@inproceedings{
+zhao2024dynavol,
+title={DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization},
+author={Yanpeng Zhao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
+booktitle={The Twelfth International Conference on Learning Representations},
+year={2024},
+url={https://openreview.net/forum?id=koYsgfEwCQ}
 }
 
 
