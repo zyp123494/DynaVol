@@ -83,3 +83,36 @@ $ bash run.sh
 $ bash run_hyper.sh
 ```
 
+
+## Citation
+
+  
+
+If you find our work helps, please cite our paper.
+
+  
+
+```bibtex
+
+
+@inproceedings{
+zhao2024dynavol,
+title={DynaVol: Unsupervised Learning for Dynamic Scenes through Object-Centric Voxelization},
+author={Yanpeng Zhao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
+booktitle={The Twelfth International Conference on Learning Representations},
+year={2024},
+url={https://openreview.net/forum?id=koYsgfEwCQ}
+}
+
+@misc{zhao2024dynamicsceneunderstandingobjectcentric,
+      title={Dynamic Scene Understanding through Object-Centric Voxelization and Neural Rendering}, 
+      author={Yanpeng Zhao and Yiwei Hao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
+      year={2024},
+      eprint={2407.20908},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2407.20908}, 
+}
+
+
+```
