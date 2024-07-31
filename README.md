@@ -39,5 +39,12 @@ Install the correct version of [torch_scatter](https://github.com/rusty1s/pytorc
 pip install torch_scatter-2.1.2+pt21cu121-cp38-cp38-linux_x86_64.whl
 ```
 
+## Dataset
+In our paper, we use:
+
+- synthetic dataset from [DynaVol](https://github.com/zyp123494/DynaVol/tree/dynavol).
+- real-world dataset from [Hyper-NeRF](https://hypernerf.github.io/), [NeRF-DS](https://jokeryan.github.io/projects/nerf-ds/), and [D2NeRF](https://d2nerf.github.io/).
+
+
 
  code is coming soon!
