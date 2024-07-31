@@ -931,25 +931,25 @@ def scene_rep_reconstruction(args, cfg, cfg_model, cfg_train,writer,xyz_min, xyz
                 'model_state_dict': model.state_dict(),
             },path)
 
-            testsavedir = os.path.join(cfg.basedir, cfg.expname, f'{global_step}-test')
-            if os.path.exists(testsavedir) == False:
-                os.makedirs(testsavedir)
+            # testsavedir = os.path.join(cfg.basedir, cfg.expname, f'{global_step}-test')
+            # if os.path.exists(testsavedir) == False:
+            #     os.makedirs(testsavedir)
             
-            if cfg.data.dataset_type != 'hyper_dataset': 
-                rgbs,disps = render_viewpoints(
-                    render_poses=data_dict['poses'][data_dict['i_test']],
-                    HW=data_dict['HW'][data_dict['i_test']],
-                    Ks=data_dict['Ks'][data_dict['i_test']],
-                    gt_imgs=[data_dict['images'][i].cpu().numpy() for i in data_dict['i_test']],
-                    savedir=testsavedir,
-                    test_times=data_dict['times'][data_dict['i_test']],
-                    eval_psnr=True, eval_ssim=args.eval_ssim, eval_lpips_alex=args.eval_lpips_alex, eval_lpips_vgg=args.eval_lpips_vgg,
-                    **render_viewpoints_kwargs)
-            else:
-                rgbs,disps = render_viewpoints_hyper(
-                        data_class=data_class,
-                        savedir=testsavedir, all=False, test=True, eval_psnr=True,
-                        **render_viewpoints_kwargs)
+            # if cfg.data.dataset_type != 'hyper_dataset': 
+            #     rgbs,disps = render_viewpoints(
+            #         render_poses=data_dict['poses'][data_dict['i_test']],
+            #         HW=data_dict['HW'][data_dict['i_test']],
+            #         Ks=data_dict['Ks'][data_dict['i_test']],
+            #         gt_imgs=[data_dict['images'][i].cpu().numpy() for i in data_dict['i_test']],
+            #         savedir=testsavedir,
+            #         test_times=data_dict['times'][data_dict['i_test']],
+            #         eval_psnr=True, eval_ssim=args.eval_ssim, eval_lpips_alex=args.eval_lpips_alex, eval_lpips_vgg=args.eval_lpips_vgg,
+            #         **render_viewpoints_kwargs)
+            # else:
+            #     rgbs,disps = render_viewpoints_hyper(
+            #             data_class=data_class,
+            #             savedir=testsavedir, all=False, test=True, eval_psnr=True,
+            #             **render_viewpoints_kwargs)
 
             testsavedir = os.path.join(cfg.basedir, cfg.expname, f'{global_step}-train')
             if os.path.exists(testsavedir) == False:
