@@ -84,6 +84,9 @@ $ bash run.sh
 $ bash run_hyper.sh
 ```
 
+### Known issues
+Semantic probability results can vary slightly even with the same configuration settings and random seed. To achieve optimal results, consider running for multiple times or adjusting the weight entropy.
+
 
 ## Citation
 
