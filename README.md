@@ -47,7 +47,7 @@ In our paper, we use:
 
 
 ## Experiment
-Extract DINOv2 features with FeatUp, modify the "img_dir" in extract_dinov2.py then run:
+For real-world scenes, first extract DINOv2 features with FeatUp, modify the "img_dir" in extract_dinov2.py then run:
 ```
 python extract_dinov2.py
 ```
