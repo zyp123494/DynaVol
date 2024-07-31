@@ -34,5 +34,10 @@ pip install -e .
 #install requirements
 pip install -r requirements.txt
 ```
-Install the correct version of [torch_scatter](https://github.com/rusty1s/pytorch_scatter)
+Install the correct version of [torch_scatter](https://github.com/rusty1s/pytorch_scatter), for torch=2.1.0+cuda12.1, you can simply download the corresponding version from [here](https://data.pyg.org/whl/) and simply run:
+```
+pip install torch_scatter-2.1.2+pt21cu121-cp38-cp38-linux_x86_64.whl
+```
+
+
  code is coming soon!
