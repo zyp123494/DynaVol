@@ -13,7 +13,7 @@ data = dict(
 
 
 fine_train = dict(
-    weight_entropy=0.004,
+    weight_entropy=0.006,
     dino_start_training = 4000,
 )
 
