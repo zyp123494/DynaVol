@@ -133,16 +133,11 @@ def post_process(density, act_shift,num_slots,pos, dx,rgb,split_val_nonprune, th
     binary_mask = np.logical_and(density >= thresh, grad > split_val_nonprune)
 
 
-    if dataset_type =='dnerf':
-        pos_thresh = 2*voxel_size
-        rgb_thresh = 8  #8 by default 15 for metal&3realcmpx
-        traj_thresh = 5*voxel_size
-        use_dbscan =False   #True for 3fall3still else False
-    else:
-        pos_thresh = cluster_args.pos_thresh *voxel_size
-        rgb_thresh = cluster_args.rgb_thresh
-        traj_thresh = cluster_args.traj_thresh * voxel_size
-        use_dbscan = cluster_args.use_dbscan
+    
+    pos_thresh = cluster_args.pos_thresh *voxel_size
+    rgb_thresh = cluster_args.rgb_thresh
+    traj_thresh = cluster_args.traj_thresh * voxel_size
+    use_dbscan = cluster_args.use_dbscan
 
   
   

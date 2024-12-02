@@ -33,3 +33,10 @@ fine_model_and_render = dict(
     maskout_near_cam_vox = True,
 ) 
 
+cluster = dict(
+    rgb_thresh = 8,#8 by default 15 for metal&3realcmpx
+    pos_thresh =2, #2
+    traj_thresh = 5,  #5
+    use_dbscan =False,  ##True for 3fall3still else False
+)
+

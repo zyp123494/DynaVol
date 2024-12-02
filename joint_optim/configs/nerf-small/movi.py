@@ -12,7 +12,7 @@ data = dict(
 
 fine_train = dict(
     N_iters=20000, 
-    lrate_seg_mask = 0.1,
+    lrate_seg_mask = 1e-3,
     lrate_latent_code = 0.1,
     lrate_feature = 0.01,
     warmup_model_path = "./../warmup/logs/small/8obj"
