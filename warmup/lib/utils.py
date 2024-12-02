@@ -476,7 +476,10 @@ def entropy_loss(x, eps = 1e-5):
 def load_model(model_class, ckpt_path):
     ckpt = torch.load(ckpt_path)
     model = model_class(**ckpt['model_kwargs'])
-    model.dino_mlp = nn.Linear(model.dino_channel, ckpt['model_state_dict']['dino_mlp.weight'].shape[0])
+    try:
+        model.dino_mlp = nn.Linear(model.dino_channel, ckpt['model_state_dict']['dino_mlp.weight'].shape[0])
+    except:
+        pass
     model.load_state_dict(ckpt['model_state_dict'],strict = False)
     return model
 

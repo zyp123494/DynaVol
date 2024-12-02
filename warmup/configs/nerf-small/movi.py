@@ -4,7 +4,7 @@ expname = 'small/8obj'
 basedir = './logs'
 
 data = dict(
-    datadir='/data/8obj/dynamic',
+    datadir='/data/ypzhao/8obj/dynamic',
     dataset_type='dnerf',
     white_bkgd=True,
     half_res = False,
