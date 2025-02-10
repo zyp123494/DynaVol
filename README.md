@@ -10,6 +10,8 @@ Yanpeng Zhao, Yiwei Hao, Siyu Gao, [Yunbo Wang](https://wyb15.github.io/)<sup>â€
 <img  src="/figure/dynavol-s.png"  alt="dynavol-s"  style="zoom:67%;"  />
 
 ## NewsðŸŽ‰
+-[2025.2.5] DynaVol-S got accepted by TPAMI2025!
+
 -[2024.7.31] DynaVol-S has been integrated into this repo, which significantly improve the model performance in real-world scenes by incorporating DINOv2 features. For the original version aligned with ICLR24 paper, please check the [dynavol](https://github.com/zyp123494/DynaVol/tree/dynavol) branch.
 
 -[2024.1.17] DynaVol got accepted by ICLR2024!
