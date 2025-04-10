@@ -110,16 +110,17 @@ If you find our work helps, please cite our paper.
       url={https://openreview.net/forum?id=koYsgfEwCQ}
 }
 
-@misc{zhao2024dynamicsceneunderstandingobjectcentric,
-      title={Dynamic Scene Understanding through Object-Centric Voxelization and
-      Neural Rendering}, 
-      author={Yanpeng Zhao and Yiwei Hao and Siyu Gao and Yunbo Wang and Xiaokang Yang},
-      year={2024},
-      eprint={2407.20908},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2407.20908}, 
-}
+@ARTICLE{10877772,
+  author={Zhao, Yanpeng and Hao, Yiwei and Gao, Siyu and Wang, Yunbo and Yang, Xiaokang},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+  title={Dynamic Scene Understanding Through Object-Centric Voxelization and Neural Rendering}, 
+  year={2025},
+  volume={47},
+  number={5},
+  pages={4215-4231},
+  keywords={Three-dimensional displays;Semantics;Rendering (computer graphics);Neural radiance field;Videos;Geometry;Cameras;Training;Solid modeling;Deformation;Inverse rendering;neural radiance field;object-centric representation learning},
+  doi={10.1109/TPAMI.2025.3539866}}
+
 
 
 ```
